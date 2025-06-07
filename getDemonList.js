@@ -17,9 +17,11 @@ export default async function getDemonList() {
   const puppeteer = await getPuppeteer();
   const executablePath = await (async () => {
     if (process.env.AWS_LAMBDA_FUNCTION_VERSION || process.env.VERCEL) {
+      console.log('Using Puppeteer from chrome-aws-lambda');
       // В продакшне (Lambda или Vercel) берем из chrome-aws-lambda
       return await chromium.executablePath;
     } else {
+      console.log('Using local Puppeteer');
       // Локально пытаемся найти хром в системе
       // Можно указать путь вручную, или использовать puppeteer из полного пакета
       const puppeteer = await import('puppeteer');
@@ -27,6 +29,7 @@ export default async function getDemonList() {
     }
   })();
 
+  console.log('Using executable path:', executablePath);
   const url = 'https://demonlist.org/';
   const browser = await puppeteer.launch({
     args: [],

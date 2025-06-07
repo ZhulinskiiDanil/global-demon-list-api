@@ -78,3 +78,6 @@ app.get('/', async (_req, res) => {
 
 // Экспортируем Express как handler для Vercel
 export default app;
+// app.listen(3000, () => {
+//   console.log('Server is running on port 3000');
+// });

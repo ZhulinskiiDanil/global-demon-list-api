@@ -1,10 +1,37 @@
-import puppeteer from 'puppeteer';
+import chromium from 'chrome-aws-lambda';
+
+function getPuppeteer() {
+  if (process.env.AWS_LAMBDA_FUNCTION_VERSION || process.env.VERCEL) {
+    console.log('Using Puppeteer from chrome-aws-lambda');
+    // В продакшне (Lambda или Vercel) берем из chrome-aws-lambda
+    return import('puppeteer-core');
+  } else {
+    console.log('Using local Puppeteer');
+    // Локально пытаемся найти хром в системе
+    // Можно указать путь вручную, или использовать puppeteer из полного пакета
+    return import('puppeteer');
+  }
+}
 
 export default async function getDemonList() {
+  const puppeteer = await getPuppeteer();
+  const executablePath = await (async () => {
+    if (process.env.AWS_LAMBDA_FUNCTION_VERSION || process.env.VERCEL) {
+      // В продакшне (Lambda или Vercel) берем из chrome-aws-lambda
+      return await chromium.executablePath;
+    } else {
+      // Локально пытаемся найти хром в системе
+      // Можно указать путь вручную, или использовать puppeteer из полного пакета
+      const puppeteer = await import('puppeteer');
+      return puppeteer.executablePath();
+    }
+  })();
+
   const url = 'https://demonlist.org/';
   const browser = await puppeteer.launch({
-    headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    args: [],
+    executablePath: executablePath,
+    headless: false,
   });
   const page = await browser.newPage();
 

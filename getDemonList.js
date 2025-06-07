@@ -2,7 +2,10 @@ import puppeteer from 'puppeteer';
 
 export default async function getDemonList() {
   const url = 'https://demonlist.org/';
-  const browser = await puppeteer.launch({ headless: true });
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  });
   const page = await browser.newPage();
 
   await page.goto(url, { waitUntil: 'networkidle2' });
@@ -20,17 +23,19 @@ export default async function getDemonList() {
     const rows = document.querySelectorAll("a[href^='/classic']");
     const results = [];
 
-    rows.forEach(row => {
+    rows.forEach((row) => {
       const paras = row.querySelectorAll('p');
-      const imageUrl = row.querySelector('img') ? row.querySelector('img').src : null;
+      const imageUrl = row.querySelector('img')
+        ? row.querySelector('img').src
+        : null;
       const result = {
         top: 0,
         name: '',
         author: '',
-        imageUrl: imageUrl
-      }
+        imageUrl: imageUrl,
+      };
 
-      paras.forEach(para => {
+      paras.forEach((para) => {
         const text = para.textContent.trim(); // "#n - Name"
         const match = text.match(/^#(\d+)\s*-\s*(.+)$/);
 
@@ -42,7 +47,7 @@ export default async function getDemonList() {
         }
       });
 
-      results.push(result)
+      results.push(result);
     });
 
     return results;
@@ -51,5 +56,5 @@ export default async function getDemonList() {
   console.log('Demon list:', demons);
   await browser.close();
 
-  return demons
+  return demons;
 }

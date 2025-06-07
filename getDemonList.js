@@ -2,8 +2,10 @@ import fs from 'fs';
 import puppeteer from 'puppeteer';
 
 const chromePath = fs
-  .readdirSync('/tmp/puppeteer-cache/chrome/')
-  .map((dir) => `/tmp/puppeteer-cache/chrome/${dir}/chrome`)
+  .readdirSync('/opt/render/.cache/puppeteer/chrome/')
+  .map(
+    (dir) => `/opt/render/.cache/puppeteer/chrome/${dir}/chrome-linux64/chrome`
+  )
   .find(fs.existsSync);
 
 export default async function getDemonList() {

@@ -33,7 +33,7 @@ export default async function getDemonList() {
   const url = 'https://demonlist.org/';
   const browser = await puppeteer.launch({
     args: [],
-    executablePath: executablePath,
+    executablePath: executablePath || '/usr/bin/chromium-browser',
     headless: false,
   });
   const page = await browser.newPage();

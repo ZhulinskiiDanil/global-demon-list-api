@@ -52,7 +52,7 @@ async function getCachedDemonList() {
 
 getCachedDemonList();
 
-app.get('/list', async (_req, res) => {
+app.get('/', async (_req, res) => {
   try {
     const list = await getCachedDemonList();
     res.json(list);
@@ -61,20 +61,20 @@ app.get('/list', async (_req, res) => {
   }
 });
 
-app.get('/list/:id', async (req, res) => {
-  const demonId = req.params.id;
-  try {
-    const list = await getDemonList();
-    const demon = list.find((d) => d.id === parseInt(demonId, 10));
-    if (demon) {
-      res.json(demon);
-    } else {
-      res.status(404).json({ error: 'Demon not found' });
-    }
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch demon details' });
-  }
-});
+// app.get('/list/:id', async (req, res) => {
+//   const demonId = req.params.id;
+//   try {
+//     const list = await getDemonList();
+//     const demon = list.find((d) => d.id === parseInt(demonId, 10));
+//     if (demon) {
+//       res.json(demon);
+//     } else {
+//       res.status(404).json({ error: 'Demon not found' });
+//     }
+//   } catch (error) {
+//     res.status(500).json({ error: 'Failed to fetch demon details' });
+//   }
+// });
 
 // Экспортируем Express как handler для Vercel
 export default app;

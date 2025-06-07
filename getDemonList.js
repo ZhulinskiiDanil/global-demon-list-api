@@ -1,4 +1,12 @@
 import chromium from 'chrome-aws-lambda';
+import { execSync } from 'child_process';
+
+try {
+  const path = execSync('which chromium-browser').toString().trim();
+  console.log('Chromium path:', path);
+} catch {
+  console.log('Chromium not found');
+}
 
 function getPuppeteer() {
   if (process.env.AWS_LAMBDA_FUNCTION_VERSION || process.env.VERCEL) {

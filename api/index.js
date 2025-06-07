@@ -4,7 +4,6 @@ import rateLimit from 'express-rate-limit';
 import getDemonList from '../getDemonList.js';
 
 const app = express();
-const port = 3000;
 
 app.use(express.json());
 app.use(cors());
@@ -17,7 +16,9 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// Call getDemonList function once a day
+// Cache logic (serverless функции "стартуют" заново каждый вызов,
+// так что кэш тут работать не будет, нужно вынести в глобальный контекст)
+
 let demonListCache = null;
 const cacheDuration = 24 * 60 * 60 * 1000; // 24 hours
 
@@ -75,6 +76,5 @@ app.get('/list/:id', async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
-});
+// Экспортируем Express как handler для Vercel
+export default app;

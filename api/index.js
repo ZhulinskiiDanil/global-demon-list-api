@@ -1,7 +1,7 @@
 import cors from 'cors';
 import express from 'express';
 import rateLimit from 'express-rate-limit';
-import getDemonList from '../getDemonList.js';
+// import getDemonList from '../getDemonList.js';
 
 const app = express();
 
@@ -19,43 +19,44 @@ app.use(limiter);
 // Cache logic (serverless функции "стартуют" заново каждый вызов,
 // так что кэш тут работать не будет, нужно вынести в глобальный контекст)
 
-let demonListCache = null;
-const cacheDuration = 24 * 60 * 60 * 1000; // 24 hours
+// let demonListCache = null;
+// const cacheDuration = 24 * 60 * 60 * 1000; // 24 hours
 
-let isLoading = false;
-let loadingPromise = null;
+// let isLoading = false;
+// let loadingPromise = null;
 
-async function getCachedDemonList() {
-  const now = Date.now();
+// async function getCachedDemonList() {
+//   const now = Date.now();
 
-  if (!demonListCache || now - demonListCache.timestamp > cacheDuration) {
-    if (!isLoading) {
-      isLoading = true;
-      loadingPromise = (async () => {
-        try {
-          const data = await getDemonList();
-          demonListCache = {
-            data,
-            timestamp: Date.now(),
-          };
-        } finally {
-          isLoading = false;
-        }
-        return demonListCache.data;
-      })();
-    }
-    return loadingPromise;
-  }
+//   if (!demonListCache || now - demonListCache.timestamp > cacheDuration) {
+//     if (!isLoading) {
+//       isLoading = true;
+//       loadingPromise = (async () => {
+//         try {
+//           const data = await getDemonList();
+//           demonListCache = {
+//             data,
+//             timestamp: Date.now(),
+//           };
+//         } finally {
+//           isLoading = false;
+//         }
+//         return demonListCache.data;
+//       })();
+//     }
+//     return loadingPromise;
+//   }
 
-  return demonListCache.data;
-}
-
-getCachedDemonList();
+//   return demonListCache.data;
+// }
 
 app.get('/', async (_req, res) => {
   try {
-    const list = await getCachedDemonList();
-    res.json(list);
+    const response = await fetch(
+      'https://api.demonlist.org/levels/classic?search=&levels_type=all&limit=0'
+    ).then((res) => res.json());
+
+    res.json(response);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch demon list' });
   }

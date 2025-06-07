@@ -40,9 +40,9 @@ export default async function getDemonList() {
   console.log('Using executable path:', executablePath);
   const url = 'https://demonlist.org/';
   const browser = await puppeteer.launch({
-    args: [],
+    args: chromium.args,
     executablePath: executablePath || '/usr/bin/chromium-browser',
-    headless: false,
+    headless: chromium.headless,
   });
   const page = await browser.newPage();
 

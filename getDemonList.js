@@ -1,10 +1,17 @@
+import fs from 'fs';
 import puppeteer from 'puppeteer';
+
+const chromePath = fs
+  .readdirSync('/tmp/puppeteer-cache/chrome/')
+  .map((dir) => `/tmp/puppeteer-cache/chrome/${dir}/chrome`)
+  .find(fs.existsSync);
 
 export default async function getDemonList() {
   const url = 'https://demonlist.org/';
   const browser = await puppeteer.launch({
     headless: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    executablePath: chromePath,
   });
   const page = await browser.newPage();
 
